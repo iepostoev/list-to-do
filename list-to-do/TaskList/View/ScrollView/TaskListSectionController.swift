@@ -8,7 +8,8 @@
 class TaskListSectionController: ListSectionController {
     
     var cellDelegate: TaskCellDelegate?
-    private var object: String?
+    
+    private var taskTitle: String?
     
     override init() {
         super.init()
@@ -32,13 +33,13 @@ class TaskListSectionController: ListSectionController {
             return UICollectionViewCell()
         }
         cell.delegate = cellDelegate
-        cell.update(text: object)
+        cell.update(text: taskTitle)
         
         return cell
     }
     
-    override func didUpdate(to object: Any) {
-        self.object = object as? String
+    override func didUpdate(to text: Any) {
+        self.taskTitle = text as? String
     }
 }
 

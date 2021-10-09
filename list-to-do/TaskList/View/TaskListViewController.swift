@@ -7,17 +7,18 @@
 
 class TaskListViewController: UIViewController,
                               ListAdapterDataSource,
-                              AddItemViewDelegate,
-                              TaskCellDelegate {
+                              AddTaskViewDelegate,
+                              TaskCellDelegate,
+                              TaskListViewProtocol{
     
-    private var items = TaskListConstants.initialTaskListItems
+    var presenter: TaskListPresenterProtocol!
     
-    private let addItemView = AddItemView()
+    private let addTaskView = AddTaskView()
 
 	private var taskListView: UICollectionView = {
 		let layout = UICollectionViewFlowLayout()
 		let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
-		collectionView.backgroundColor = .white
+        collectionView.backgroundColor = AppScheme.shared.colorScheme.surfaceColor
 		return collectionView
 	}()
 	
@@ -28,7 +29,7 @@ class TaskListViewController: UIViewController,
 	override func viewDidLoad() {
 		setupNavigation()
 		view.addSubview(taskListView)
-        addItemView.delegate = self
+        addTaskView.delegate = self
 		adapter.collectionView = taskListView
 		adapter.dataSource = self
 	}
@@ -36,26 +37,32 @@ class TaskListViewController: UIViewController,
 	override func viewDidLayoutSubviews() {
 		super.viewDidLayoutSubviews()
         taskListView.frame = view.safeAreaLayoutGuide.layoutFrame
-        addItemView.frame = view.safeAreaLayoutGuide.layoutFrame
+        addTaskView.frame = view.safeAreaLayoutGuide.layoutFrame
 	}
 	
 	private func setupNavigation() {
         title = "Tasks"
-		navigationItem.rightBarButtonItem = UIBarButtonItem(title: "ADD",
-                                                            style: .plain,
-                                                            target: self,
-                                                            action: #selector(addTask))
+        let barButton = UIBarButtonItem(title: "ADD",
+                                        style: .plain,
+                                        target: self,
+                                        action: #selector(addTask))
+        let attributes: [NSAttributedString.Key: Any] = [
+            .font: AppScheme.shared.typographyScheme.button,
+            .foregroundColor: AppScheme.shared.colorScheme.primaryColor
+        ]
+        barButton.setTitleTextAttributes(attributes, for: .normal)
+		navigationItem.rightBarButtonItem = barButton
 	}
 	
 	@objc
 	private func addTask(sender: UIBarButtonItem) {
-        view.addSubview(addItemView)
+        view.addSubview(addTaskView)
 	}
 	
 	//MARK: -ListAdapterDataSource
 	
 	func objects(for listAdapter: ListAdapter) -> [ListDiffable] {
-		return items as [ListDiffable]
+        return presenter.getTasks() as [ListDiffable]
 	}
 	
 	func listAdapter(_ listAdapter: ListAdapter,
@@ -69,19 +76,26 @@ class TaskListViewController: UIViewController,
 		nil
 	}
 	
-    //MARK: -AddItemViewDelegate
-	func itemAdded(text: String?) {
-        items.append(text ?? "")
-        addItemView.reset()
-        addItemView.removeFromSuperview()
-        adapter.reloadData(completion: nil)
+    //MARK: -AddTaskViewDelegate
+	func taskAdded(text: String?) {
+        presenter.addTask(text)
 	}
     
     //MARK: -TaskCellDelegate
-    func deleteTask(cell: UICollectionViewCell) {
-        if let indexPath = taskListView.indexPath(for: cell) {
-            items.remove(at: indexPath.row)
+    func deleteTaskButtonTapped(cell: UICollectionViewCell) {
+        guard let indexPath = taskListView.indexPath(for: cell) else {
+            return
         }
+        presenter.removeTask(indexPath)
+    }
+    
+    // MARK: -TaskListViewProtocol
+    func reload() {
         adapter.reloadData(completion: nil)
+    }
+    
+    func removeAddItemView() {
+        addTaskView.reset()
+        addTaskView.removeFromSuperview()
     }
 }

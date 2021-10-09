@@ -12,23 +12,23 @@ class TaskCell: UICollectionViewCell {
 	private let nameLabel: UILabel = {
 		let label = UILabel()
 		label.numberOfLines = 1
-		label.font = UIFont.systemFont(ofSize: 20)
-		label.textColor = .white
+        label.font = AppScheme.shared.typographyScheme.subtitle1
+        label.textColor = AppScheme.shared.colorScheme.primaryColorVariant
 		return label
 	}()
 	
 	private let deleteButton: UIButton = {
 		let button = UIButton()
         let title = TaskListConstants.deleteTaskButtonTitle
-		button.backgroundColor = .blue
+        button.backgroundColor = AppScheme.shared.colorScheme.primaryColor
 		button.setTitle(title, for: .normal)
-		button.titleLabel?.font = UIFont.systemFont(ofSize: 20)
+		button.titleLabel?.font = AppScheme.shared.typographyScheme.button
 		return button
 	}()
     
 	override init(frame: CGRect) {
 		super.init(frame: frame)
-        backgroundColor = .cyan
+        backgroundColor = .white
         addSubviews()
         configureSubviews()
 	}
@@ -52,6 +52,7 @@ class TaskCell: UICollectionViewCell {
     }
     
     private func configureSubviews() {
+        //self is not accessible when setting default values during initialization
         deleteButton.addTarget(self,
                        action: #selector(deleteButtonTapped),
                        for: .touchUpInside)
@@ -59,7 +60,7 @@ class TaskCell: UICollectionViewCell {
     
     @objc
     private func deleteButtonTapped() {
-        delegate?.deleteTask(cell: self)
+        delegate?.deleteTaskButtonTapped(cell: self)
     }
 	
 	private func setupLayout() {

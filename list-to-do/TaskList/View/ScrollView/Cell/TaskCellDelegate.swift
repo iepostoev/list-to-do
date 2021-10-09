@@ -6,5 +6,5 @@
 //
 
 protocol TaskCellDelegate {
-    func deleteTask(cell: UICollectionViewCell)
+    func deleteTaskButtonTapped(cell: UICollectionViewCell)
 }

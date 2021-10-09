@@ -9,8 +9,6 @@ target 'list-to-do' do
 
   pod 'YogaKit', '~> 1.7'
   pod 'IGListKit', '~> 4.0.0'
-  pod 'MaterialComponents/Dialogs'
-  pod 'MaterialComponents/Buttons'
-
+  pod 'MaterialComponents'
 
 end

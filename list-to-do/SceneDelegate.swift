@@ -15,7 +15,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
                willConnectTo session: UISceneSession,
                options connectionOptions: UIScene.ConnectionOptions) {
         window = UIWindow(windowScene: scene as! UIWindowScene)
-        let tasksViewController = TaskListViewController()
+        let tasksViewController = TaskListCoordinator.createController()
         let navigation = UINavigationController(rootViewController: tasksViewController)
         window?.rootViewController = navigation
         window?.backgroundColor = .white
@@ -49,7 +49,4 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // Use this method to save data, release shared resources, and store enough scene-specific state information
         // to restore the scene back to its current state.
     }
-    
-    
 }
-
